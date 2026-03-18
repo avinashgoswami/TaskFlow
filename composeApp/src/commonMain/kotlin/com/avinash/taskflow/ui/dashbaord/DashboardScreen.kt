@@ -39,6 +39,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
@@ -58,7 +59,7 @@ fun DashboardScreen(
     onAddTask: (String) -> Unit,
     onToggleTask: (Int) -> Unit,
     onDeleteTask: (Int) -> Unit,
-    onStartWork: () -> Unit // 🔥 NEW
+    onStartWork: () -> Unit
 ) {
 
     var showDialog by remember { mutableStateOf(false) }
@@ -88,15 +89,12 @@ fun DashboardScreen(
                 color = Color(0xFF0F172A)
             )
 
-            // 🔥 Trigger WorkManager
             IconButton(onClick = { onStartWork() }) {
                 Icon(Icons.Default.Notifications, contentDescription = null)
             }
         }
 
-        Column(
-            modifier = Modifier.padding(horizontal = 16.dp)
-        ) {
+        Column(modifier = Modifier.padding(horizontal = 16.dp)) {
 
             Spacer(modifier = Modifier.height(8.dp))
 
@@ -107,7 +105,7 @@ fun DashboardScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // 🔥 Add Task Button → opens bottom sheet
+            // 🔥 Add Task Button
             Button(
                 onClick = { showBottomSheet = true },
                 modifier = Modifier.fillMaxWidth()
@@ -126,7 +124,7 @@ fun DashboardScreen(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            // 🔥 Task List with Swipe
+            // 🔥 Task List
             tasks.forEach { task ->
 
                 var offsetX by remember { mutableStateOf(0f) }
@@ -134,27 +132,29 @@ fun DashboardScreen(
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(vertical = 6.dp)
+                        .padding(vertical = 6.dp) // ✅ spacing here
+                        .clip(RoundedCornerShape(12.dp))
                 ) {
 
-                    // 🔴 Background
+                    // 🔴 Background (Delete)
                     Box(
                         modifier = Modifier
                             .matchParentSize()
-                            .background(Color.Red, RoundedCornerShape(12.dp))
-                            .padding(end = 16.dp),
+                            .background(Color.Red),
                         contentAlignment = Alignment.CenterEnd
                     ) {
                         Icon(
                             Icons.Default.Delete,
                             contentDescription = null,
-                            tint = Color.White
+                            tint = Color.White,
+                            modifier = Modifier.padding(end = 16.dp)
                         )
                     }
 
-                    // 🟡 Foreground (swipeable)
+                    // 🟡 Foreground (Swipe)
                     Box(
                         modifier = Modifier
+                            .fillMaxWidth()
                             .offset { IntOffset(offsetX.toInt(), 0) }
                             .pointerInput(Unit) {
                                 detectHorizontalDragGestures(
@@ -170,7 +170,7 @@ fun DashboardScreen(
                                 }
                             }
                     ) {
-                            TaskItem(
+                        TaskItem(
                             task = task,
                             onToggle = { onToggleTask(task.id) },
                             onDelete = {
@@ -198,11 +198,7 @@ fun DashboardScreen(
                     .padding(16.dp)
             ) {
 
-                Text(
-                    text = "Add Task",
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold
-                )
+                Text("Add Task", fontSize = 20.sp, fontWeight = FontWeight.Bold)
 
                 Spacer(modifier = Modifier.height(12.dp))
 
@@ -230,7 +226,7 @@ fun DashboardScreen(
         }
     }
 
-    // 🔥 Confirmation Dialog
+    // 🔥 Dialog
     if (showDialog) {
         AlertDialog(
             onDismissRequest = { showDialog = false },
@@ -290,17 +286,11 @@ fun StatsCard(
             Column(modifier = Modifier.weight(1f)) {
                 Text(title, fontSize = 14.sp, color = Color.Gray)
                 Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    value,
-                    fontSize = 22.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color(0xFF0F172A)
-                )
+                Text(value, fontSize = 22.sp, fontWeight = FontWeight.Bold)
             }
         }
     }
 }
-
 
 @Composable
 fun TaskItem(
@@ -309,9 +299,7 @@ fun TaskItem(
     onDelete: () -> Unit
 ) {
     Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 6.dp),
+        modifier = Modifier.fillMaxWidth(), // ✅ NO padding here
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(Color.White),
         elevation = CardDefaults.cardElevation(2.dp)
