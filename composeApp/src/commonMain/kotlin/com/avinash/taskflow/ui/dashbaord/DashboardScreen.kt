@@ -71,6 +71,8 @@ fun DashboardScreen(
             .background(Color(0xFFF1F5F9))
     ) {
 
+        Spacer(modifier = Modifier.height(25.dp))
+
         // 🔷 Top Bar
         Row(
             modifier = Modifier
