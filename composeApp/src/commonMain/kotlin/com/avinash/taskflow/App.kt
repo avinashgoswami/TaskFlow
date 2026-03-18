@@ -34,10 +34,13 @@ import com.avinash.taskflow.ui.approval.ApprovalScreen
 import com.avinash.taskflow.ui.detail.DetailScreen
 import com.avinash.taskflow.ui.dashboard.DashboardScreen
 import com.avinash.taskflow.ui.map.MapScreen
+import com.avinash.taskflow.utils.WorkManagerHelper
 import com.avinash.taskflow.viewmodel.DashboardViewModel
 
 @Composable
-fun App() {
+fun App(
+    workManagerHelper: WorkManagerHelper // 🔥 injected from Android
+) {
 
     val viewModel = remember { DashboardViewModel() }
 
@@ -49,18 +52,21 @@ fun App() {
     Scaffold(
         bottomBar = {
             NavigationBar {
+
                 NavigationBarItem(
                     selected = selectedTab == 0,
                     onClick = { selectedTab = 0 },
                     icon = { Icon(Icons.Default.Home, contentDescription = null) },
                     label = { Text("Dashboard") }
                 )
+
                 NavigationBarItem(
                     selected = selectedTab == 1,
                     onClick = { selectedTab = 1 },
                     icon = { Icon(Icons.Default.LocationOn, contentDescription = null) },
                     label = { Text("Map") }
                 )
+
                 NavigationBarItem(
                     selected = selectedTab == 2,
                     onClick = { selectedTab = 2 },
@@ -72,15 +78,23 @@ fun App() {
     ) { padding ->
 
         when (selectedTab) {
+
             0 -> DashboardScreen(
                 stats = stats,
                 tasks = tasks,
                 onCardClick = {},
                 onAddTask = { viewModel.addTask(it) },
                 onToggleTask = { viewModel.toggleTask(it) },
-                onDeleteTask = { viewModel.deleteTask(it) }
+                onDeleteTask = { viewModel.deleteTask(it) },
+
+                // 🔥 WorkManager trigger
+                onStartWork = {
+                    workManagerHelper.startWork()
+                }
             )
+
             1 -> MapScreen()
+
             2 -> ApprovalScreen()
         }
     }

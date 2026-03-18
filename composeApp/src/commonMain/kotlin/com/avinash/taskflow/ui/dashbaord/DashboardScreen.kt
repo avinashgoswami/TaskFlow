@@ -57,7 +57,8 @@ fun DashboardScreen(
     onCardClick: () -> Unit,
     onAddTask: (String) -> Unit,
     onToggleTask: (Int) -> Unit,
-    onDeleteTask: (Int) -> Unit
+    onDeleteTask: (Int) -> Unit,
+    onStartWork: () -> Unit // 🔥 NEW
 ) {
 
     var showDialog by remember { mutableStateOf(false) }
@@ -85,7 +86,8 @@ fun DashboardScreen(
                 color = Color(0xFF0F172A)
             )
 
-            IconButton(onClick = { }) {
+            // 🔥 Trigger WorkManager
+            IconButton(onClick = { onStartWork() }) {
                 Icon(Icons.Default.Notifications, contentDescription = null)
             }
         }
@@ -166,7 +168,7 @@ fun DashboardScreen(
                                 }
                             }
                     ) {
-                        TaskItem(
+                            TaskItem(
                             task = task,
                             onToggle = { onToggleTask(task.id) },
                             onDelete = {

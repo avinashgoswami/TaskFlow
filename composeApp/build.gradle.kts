@@ -31,6 +31,7 @@ kotlin {
         androidMain.dependencies {
             implementation(libs.compose.uiToolingPreview)
             implementation(libs.androidx.activity.compose)
+            implementation("androidx.work:work-runtime-ktx:2.9.0")
         }
         commonMain.dependencies {
             implementation(libs.compose.runtime)
@@ -42,7 +43,6 @@ kotlin {
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.androidx.lifecycle.runtimeCompose)
             implementation(compose.materialIconsExtended)
-            implementation("androidx.compose.material:material:1.6.0")
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
