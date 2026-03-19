@@ -1,41 +1,28 @@
 package com.avinash.taskflow
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.LocationOn
-import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.avinash.taskflow.model.Task
-import com.avinash.taskflow.model.TaskStats
 import com.avinash.taskflow.ui.approval.ApprovalScreen
-import com.avinash.taskflow.ui.detail.DetailScreen
 import com.avinash.taskflow.ui.dashboard.DashboardScreen
-import com.avinash.taskflow.ui.map.MapScreen
+import com.avinash.taskflow.ui.map.MapScreenWrapper
 import com.avinash.taskflow.utils.WorkManagerHelper
 import com.avinash.taskflow.viewmodel.DashboardViewModel
+import kotlinx.coroutines.launch
 
 @Composable
 fun App(
@@ -47,9 +34,15 @@ fun App(
     val stats = viewModel.stats.value
     val tasks = viewModel.tasks.value
 
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
+
     var selectedTab by remember { mutableStateOf(0) }
 
     Scaffold(
+        snackbarHost = {
+            SnackbarHost(hostState = snackbarHostState)
+        },
         bottomBar = {
             NavigationBar {
 
@@ -83,9 +76,36 @@ fun App(
                 stats = stats,
                 tasks = tasks,
                 onCardClick = {},
-                onAddTask = { viewModel.addTask(it) },
-                onToggleTask = { viewModel.toggleTask(it) },
-                onDeleteTask = { viewModel.deleteTask(it) },
+                onAddTask = {
+                    viewModel.addTask(it)
+
+                    scope.launch {
+                        snackbarHostState.showSnackbar(
+                            "Task Added",
+                            actionLabel = "Dismiss"
+                        )
+                    }
+                },
+                onToggleTask = {
+                    viewModel.toggleTask(it)
+
+                    scope.launch {
+                        snackbarHostState.showSnackbar(
+                            "Task Updated",
+                            actionLabel = "Dismiss"
+                        )
+                    }
+                },
+                onDeleteTask = {
+                    viewModel.deleteTask(it)
+
+                    scope.launch {
+                        snackbarHostState.showSnackbar(
+                            "Task Deleted",
+                            actionLabel = "Dismiss"
+                        )
+                    }
+                },
 
                 // 🔥 WorkManager trigger
                 onStartWork = {
@@ -93,7 +113,7 @@ fun App(
                 }
             )
 
-            1 -> MapScreen()
+            1 -> MapScreenWrapper()
 
             2 -> ApprovalScreen()
         }
