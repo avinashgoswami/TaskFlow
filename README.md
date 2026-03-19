@@ -7,4 +7,6 @@
   <img src="Images/img4.png" width="250"/>
   <img src="Images/img5.png" width="250"/>
   <img src="Images/img6.png" width="250"/>
+  <img src="Images/img7.png" width="250"/>
+  <img src="Images/img8.png" width="250"/>
 </p>

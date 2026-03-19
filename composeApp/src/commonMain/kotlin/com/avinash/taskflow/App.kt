@@ -26,7 +26,7 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun App(
-    workManagerHelper: WorkManagerHelper // 🔥 injected from Android
+    workManagerHelper: WorkManagerHelper? = null
 ) {
 
     val viewModel = remember { DashboardViewModel() }
@@ -109,7 +109,7 @@ fun App(
 
                 // 🔥 WorkManager trigger
                 onStartWork = {
-                    workManagerHelper.startWork()
+                    workManagerHelper?.startWork()
                 }
             )
 
