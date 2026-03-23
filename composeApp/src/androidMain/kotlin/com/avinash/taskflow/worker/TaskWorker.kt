@@ -40,7 +40,7 @@ class TaskWorker(
 
         val notification = NotificationCompat.Builder(applicationContext, channelId)
             .setContentTitle("TaskFlow")
-            .setContentText("Background work completed 🚀")
+            .setContentText("Test Notification")
             .setSmallIcon(android.R.drawable.ic_dialog_info)
             .build()
 
